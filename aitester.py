@@ -53,21 +53,21 @@ def load_model(checkpoint_path='final_model.pt'):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     
-    # Extract config - handle both object and dict formats
-    config_data = checkpoint['config']
-    if hasattr(config_data, '__dict__'):
-        # If it's a Config object, extract attributes
-        config = type('Config', (), {})()
-        config.vocab_size = config_data.vocab_size
-        config.embed_dim = config_data.embed_dim
-        config.num_heads = config_data.num_heads
-        config.num_layers = config_data.num_layers
-        config.ff_dim = config_data.ff_dim
-        config.max_seq_len = config_data.max_seq_len
-        config.dropout = config_data.dropout
-    else:
-        # If it's already a dict
-        config = type('Config', (), config_data)()
+    # Extract config as dictionary
+    config_dict = checkpoint['config']
+    
+    # Create a simple config object
+    class Config:
+        pass
+    
+    config = Config()
+    config.vocab_size = config_dict['vocab_size']
+    config.embed_dim = config_dict['embed_dim']
+    config.num_heads = config_dict['num_heads']
+    config.num_layers = config_dict['num_layers']
+    config.ff_dim = config_dict['ff_dim']
+    config.max_seq_len = config_dict['max_seq_len']
+    config.dropout = config_dict['dropout']
     
     # Create tokenizer
     tokenizer = SimpleTokenizer(
