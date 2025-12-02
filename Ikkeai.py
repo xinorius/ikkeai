@@ -19,7 +19,7 @@ class Config:
     # Training parameters
     batch_size = 32
     learning_rate = 3e-4
-    max_training_time = 300  # 5 minutes in seconds
+    max_training_time = 3600  # 1 hour in seconds
     checkpoint_interval = 600  # Save every 10 minutes
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -199,7 +199,15 @@ def train():
     torch.save({
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-        'config': config,
+        'config': {
+            'vocab_size': config.vocab_size,
+            'embed_dim': config.embed_dim,
+            'num_heads': config.num_heads,
+            'num_layers': config.num_layers,
+            'ff_dim': config.ff_dim,
+            'max_seq_len': config.max_seq_len,
+            'dropout': config.dropout
+        },
         'tokenizer_char_to_idx': tokenizer.char_to_idx,
         'tokenizer_idx_to_char': tokenizer.idx_to_char,
         'epoch': epoch,
